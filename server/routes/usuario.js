@@ -1,11 +1,12 @@
 const express = require('express');
 const _ = require('underscore');
+const { verificaToken, verificaAdminRole } = require('../middlewares/autenticacion')
 
 const Usuario = require('../models/usuario')
 
 const app = express();
 
-app.get('/usuario', (req, res) => {
+app.get('/usuario', [verificaToken, verificaAdminRole], (req, res) => {
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -34,7 +35,7 @@ app.get('/usuario', (req, res) => {
 });
 
 
-app.post('/usuario', (req, res) => {
+app.post('/usuario', [verificaToken, verificaAdminRole], (req, res) => {
     let body = req.body;
 
     let usuario = new Usuario({
@@ -60,7 +61,7 @@ app.post('/usuario', (req, res) => {
     });
 
 });
-app.put('/usuario/:id', (req, res) => {
+app.put('/usuario/:id', [verificaToken, verificaAdminRole], (req, res) => {
     //Obteniendo el id
     let id = req.params.id;
     //Validando para actulizar datos los cuales van a permitir actualizar
@@ -85,7 +86,7 @@ app.put('/usuario/:id', (req, res) => {
     // });
 });
 
-app.delete('/usuario/:id', (req, res) => {
+app.delete('/usuario/:id', [verificaToken, verificaAdminRole], (req, res) => {
     let id = req.params.id;
     //deje de existir el rsgstro
 
