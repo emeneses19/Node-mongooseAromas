@@ -21,6 +21,7 @@ let tipohabitacionSchema = new Schema({
     },
     descripcion: {
         type: String,
+        required: false
     },
     usuario: {
         type: Schema.Types.ObjectId,

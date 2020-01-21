@@ -12,7 +12,7 @@ app.get('/tipohabitacion', (req, res) => {
 
     Tipohabitacion.find({})
         .sort('nombre')
-        .populate('usuario', 'nombre email')
+        .populate('usuario', 'nombre apellido email')
         .exec((err, tipohabitaciones) => {
 
             if (err) {
