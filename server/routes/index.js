@@ -4,6 +4,7 @@ app.use(require('./usuario'));
 app.use(require('./login'));
 app.use(require('./tipohabitacion'));
 app.use(require('./habitacion'));
+app.use(require('./promocion'));
 // app.use(require('./upload'));
 // app.use(require('./imagenes'));
 // app.use(require('./cliente'));
