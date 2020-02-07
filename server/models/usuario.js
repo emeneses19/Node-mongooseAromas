@@ -5,19 +5,25 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 //Declarando los roles válidos
 let rolesValidos = {
-    values: ['ADMIN_ROLE', 'USER_ROLE', 'EMPLOYE_ROLE'],
+    values: ['ADMINISTRADOR', 'EMPLEADO'],
     message: '{VALUE} no esun Rol válido'
 };
 
+//Declarando los tipos de doc válidos
+
 //Declarando el esquema
 let Schema = mongoose.Schema;
+
 //Definir el esquema  --> con los datos que va a tener la coleccion
 let usuarioSchema = new Schema({
-    nombre: {
+    DNI: {
+        type: String
+    },
+    nombres: {
         type: String,
         required: [true, 'El nombre es necesario']
     },
-    apellido: {
+    apellidos: {
         type: String,
         required: [true, 'El apellido es necesario']
     },
@@ -36,7 +42,7 @@ let usuarioSchema = new Schema({
     },
     role: {
         type: String,
-        default: 'USER_ROLE',
+        default: 'EMPLEADO',
         enum: rolesValidos
     },
     estado: {
@@ -44,6 +50,10 @@ let usuarioSchema = new Schema({
         default: true
     },
     google: {
+        type: Boolean,
+        default: false
+    },
+    facebook: {
         type: Boolean,
         default: false
     },

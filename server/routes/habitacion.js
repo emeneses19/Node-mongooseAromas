@@ -2,13 +2,12 @@ const express = require('express');
 
 const { verificaToken, verificaAdminRole } = require('../middlewares/autenticacion');
 
-
 let app = express();
 let Habitacion = require('../models/habitacion');
-
+let Reserva = require('../models/reserva');
 
 // ===========================
-//  Obtener Habitacions
+//  Obtener Habitaciones
 // ===========================
 app.get('/habitaciones', (req, res) => {
     // trae todos los Habitacions
@@ -39,9 +38,78 @@ app.get('/habitaciones', (req, res) => {
             });
 
 
-        })
+        });
+});
+// ===========================
+//Buscando habitaciones disponibles
+// ===========================
+app.get('/habitaciones/disponibles', async function(req, res) {
+
+    try {
+        let fechainicio = new Date(req.query.fechainicio);
+        let fechafin = new Date(req.query.fechafin);
+        // let tipohabitacion = (req.query.tipohabitacion);
+
+        //Habitacion.find({ numero: regex, disponible: true }) para poner mas condiciones
+        const reservas = await Reserva.find({
+                fechainicio: { $lt: fechafin }, // $le menor que , $lte menor igual
+                fechafin: { $gt: fechainicio }, // $gt mayor que, $gte mayor igual
+                estado: { $ne: 'cancelado' } // $ne no es igual
+            })
+            .select('reservaHabitacion')
+            .exec();
+        let ocupadas = [];
+        for (const reserva of reservas) {
+            for (const reshab of reserva.reservaHabitacion) {
+                ocupadas.push(reshab.habitacionid);
+            }
+        }
+        const disponibles = await Habitacion.find({ '_id': { $nin: ocupadas }, disponible: true })
+
+        .exec();
+        res.json(disponibles);
+
+    } catch (error) {
+        res.status(500).json(error);
+    }
 
 });
+
+
+// ===========================
+//Buscando Promociones
+// ===========================
+// app.get('/habitaciones/promociones/', async function(req, res) {
+
+//     try {
+//         let fechainicio = new Date(req.query.fechainicio);
+//         let fechafin = new Date(req.query.fechafin);
+//         let tipohabitacion = (req.query.tipohabitacion);
+
+//         //Habitacion.find({ numero: regex, disponible: true }) para poner mas condiciones
+//         const reservas = await Reserva.find({
+//                 fechainicio: { $lt: fechafin }, // $le menor que , $lte menor igual
+//                 fechafin: { $gt: fechainicio }, // $gt mayor que, $gte mayor igual
+//                 estado: { $ne: 'cancelado' } // $ne no es igual
+//             })
+//             .select('reservaHabitacion')
+//             .exec();
+//         let ocupadas = [];
+//         for (const reserva of reservas) {
+//             for (const reshab of reserva.reservaHabitacion) {
+//                 ocupadas.push(reshab.habitacionid);
+//             }
+//         }
+//         const disponibles = await Habitacion.find({ '_id': { $nin: ocupadas }, disponible: true })
+
+//         .exec();
+//         res.json(disponibles);
+
+//     } catch (error) {
+//         res.status(500).json(error);
+//     }
+
+// });
 
 // ===========================
 //  Obtener un Habitacion por ID
@@ -107,12 +175,8 @@ app.get('/habitaciones/buscar/:termino', (req, res) => {
                 habitacions
             })
 
-        })
-
-
+        });
 });
-
-
 
 // ===========================
 //  Crear un nuevo Habitacion
@@ -147,10 +211,31 @@ app.post('/habitaciones', [verificaToken, verificaAdminRole], (req, res) => {
             ok: true,
             habitacion: habitacionDB
         });
-
     });
-
 });
+
+// ===========================
+//  Agregando una promocion a una habitacion
+// ===========================
+app.post('/habitaciones/:habitacionId/promociones', [verificaToken, verificaAdminRole], async(req, res) => {
+    const id = req.params.habitacionId;
+    const nuevaPromocion = req.body;
+    try {
+        const habitacion = await Habitacion.findById(id);
+        if (!habitacion) {
+            return res.status(400).json({
+                ok: false,
+                err: { message: 'Lo sentimos. la habitacion que estas buscando no exite' }
+            });
+        }
+        habitacion.promociones.push(nuevaPromocion);
+        await habitacion.save();
+        res.json(habitacion);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
 
 // ===========================
 //  Actualizar un Habitacion
@@ -253,9 +338,9 @@ app.delete('/habitacions/:id', [verificaToken, verificaAdminRole], (req, res) =>
 
         })
 
-    })
-
+    });
 
 });
+
 
 module.exports = app;

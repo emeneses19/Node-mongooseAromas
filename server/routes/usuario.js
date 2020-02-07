@@ -35,12 +35,13 @@ app.get('/usuario', [verificaToken, verificaAdminRole], (req, res) => {
 });
 
 
-app.post('/usuario', [verificaToken, verificaAdminRole], (req, res) => {
+app.post('/usuario', (req, res) => {
     let body = req.body;
 
     let usuario = new Usuario({
-        nombre: body.nombre,
-        apellido: body.apellido,
+        DNI: body.nroDoc,
+        nombres: body.nombres,
+        apellidos: body.apellidos,
         email: body.email,
         password: body.password,
         telefono: body.telefono,
@@ -49,7 +50,9 @@ app.post('/usuario', [verificaToken, verificaAdminRole], (req, res) => {
 
     usuario.save((err, usuarioDB) => {
         if (err) {
-            return res.status(400).json({
+            return res.status(
+
+            ).json({
                 ok: false,
                 err
             });
@@ -57,7 +60,7 @@ app.post('/usuario', [verificaToken, verificaAdminRole], (req, res) => {
         res.json({
             ok: true,
             usuario: usuarioDB
-        })
+        });
     });
 
 });
@@ -66,7 +69,7 @@ app.put('/usuario/:id', [verificaToken, verificaAdminRole], (req, res) => {
     let id = req.params.id;
     //Validando para actulizar datos los cuales van a permitir actualizar
 
-    let body = _.pick(req.body, ['nombre', 'apellido', 'email', 'img', 'role', 'estado', 'telefono']);
+    let body = _.pick(req.body, ['nombres', 'apellidos', 'email', 'img', 'role', 'estado', 'telefono', 'tipoDoc', 'nroDoc']);
     Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioDB) => {
 
         if (err) {
@@ -89,7 +92,6 @@ app.put('/usuario/:id', [verificaToken, verificaAdminRole], (req, res) => {
 app.delete('/usuario/:id', [verificaToken, verificaAdminRole], (req, res) => {
     let id = req.params.id;
     //deje de existir el rsgstro
-
     //Borra definitivamente
     // Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
     //     if (err) {

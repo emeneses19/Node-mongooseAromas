@@ -21,17 +21,12 @@ let habitacionSchema = new Schema({
         type: String,
         required: false
     },
-    numeropiso: {
-        type: String,
-        required: false
-    },
     estado: {
         type: Boolean,
         default: true
     },
     disponible: {
         type: Boolean,
-        required: true,
         default: true
     },
     tipohabitacion: {
