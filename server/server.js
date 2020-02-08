@@ -1,38 +1,33 @@
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
 }
 
-require("./config/config");
-const express = require("express");
-const cors = require("cors");
-
-const mongoose = require("mongoose");
+const morgan = require('morgan');
+const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const app = express();
-const bodyParser = require("body-parser");
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
+app.set('port', process.env.PORT || 3000);
 
+app.use(morgan('dev'));
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+app.use(require('./routes/index'));
 
-// parse application/json
-app.use(bodyParser.json());
+mongoose
+  .connect(process.env.URLDB, {
+    useCreateIndex: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false
+  })
+  .then(db => console.log('DB is connected'))
+  .catch(err => console.log(err));
 
-app.use(require("./routes/index"));
-
-// var corOptions = {
-//     origin: 'http://localhost:4200',
-//     optionsSuccessStatus: 200
-//         //this is my front-end url for development
-//         //'http://www.myproductionurl.com'
-// }
-
-mongoose.connect(process.env.URLDB, (err, res) => {
-  if (err) {
-    throw err;
-  }
-  console.log("Base de datos ONLINE");
-});
-app.listen(process.env.PORT, () => {
-  console.log("Escuchando puerto: ", process.env.PORT);
+app.listen(app.get('port'), () => {
+  console.log('Escuchando puerto: ', app.get('port'));
+  console.log('Enviroment: ', process.env.NODE_ENV);
 });

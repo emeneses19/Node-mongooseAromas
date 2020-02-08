@@ -1,10 +1,5 @@
 const express = require("express");
 
-const {
-  verificaToken,
-  verificaAdminRole
-} = require("../middlewares/autenticacion");
-
 let app = express();
 let Habitacion = require("../models/habitacion");
 let Reserva = require("../models/reserva");
@@ -171,7 +166,7 @@ app.get("/habitaciones/buscar/:termino", (req, res) => {
 // ===========================
 //  Crear un nuevo Habitacion
 // ===========================
-app.post("/habitaciones", [verificaToken, verificaAdminRole], (req, res) => {
+app.post("/habitaciones",  (req, res) => {
   // grabar el usuario
   // grabar una categoria del listado
 
@@ -208,7 +203,6 @@ app.post("/habitaciones", [verificaToken, verificaAdminRole], (req, res) => {
 // ===========================
 app.post(
   "/habitaciones/:habitacionId/promociones",
-  [verificaToken, verificaAdminRole],
   async (req, res) => {
     const id = req.params.habitacionId;
     const nuevaPromocion = req.body;
@@ -234,7 +228,7 @@ app.post(
 // ===========================
 //  Actualizar un Habitacion
 // ===========================
-app.put("/habitaciones/:id", [verificaToken, verificaAdminRole], (req, res) => {
+app.put("/habitaciones/:id",  (req, res) => {
   // grabar el usuario
   // grabar una categoria del listado
 
@@ -287,7 +281,6 @@ app.put("/habitaciones/:id", [verificaToken, verificaAdminRole], (req, res) => {
 // ===========================
 app.delete(
   "/habitacions/:id",
-  [verificaToken, verificaAdminRole],
   (req, res) => {
     let id = req.params.id;
 

@@ -1,9 +1,5 @@
 const express = require("express");
 const _ = require("underscore");
-let {
-  verificaToken,
-  verificaAdminRole
-} = require("../middlewares/autenticacion");
 const app = express();
 
 const Tipohabitacion = require("../models/tipohabitacion");
@@ -65,7 +61,7 @@ app.get("/tipohabitacion/:id", (req, res) => {
 //=================================
 //Crae nueva categoria
 //================================
-app.post("/tipohabitacion", [verificaToken, verificaAdminRole], (req, res) => {
+app.post("/tipohabitacion",  (req, res) => {
   let body = req.body;
   let tipohabitacion = new Tipohabitacion({
     nombre: body.nombre,
@@ -97,7 +93,6 @@ app.post("/tipohabitacion", [verificaToken, verificaAdminRole], (req, res) => {
 //================================
 app.put(
   "/tipohabitacion/:id",
-  [verificaToken, verificaAdminRole],
   (req, res) => {
     let id = req.params.id;
     //let body = req.body;
@@ -139,7 +134,6 @@ app.put(
 // ============================
 app.delete(
   "/tipohabitacion/:id",
-  [verificaToken, verificaAdminRole],
   (req, res) => {
     // solo un administrador puede borrar categorias
     // Categoria.findByIdAndRemove

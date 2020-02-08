@@ -1,41 +1,35 @@
-const express = require("express");
-const _ = require("underscore");
-const {
-  verificaToken,
-  verificaAdminRole
-} = require("../middlewares/autenticacion");
+const express = require('express');
+const _ = require('underscore');
 
-const Usuario = require("../models/usuario");
+const Usuario = require('../models/usuario');
 
 const app = express();
 
-app.get("/usuario", [verificaToken, verificaAdminRole], (req, res) => {
-  let desde = req.query.desde || 0;
-  desde = Number(desde);
-  let limite = req.query.limite || 5;
-  limite = Number(limite);
+app.get('/usuario', async (req, res) => {
+  try {
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
+    let limite = req.query.limite || 5;
+    limite = Number(limite);
 
-  Usuario.find({ estado: true }, "nombre apellido email role estado google img")
-    .skip(desde)
-    .limit(limite)
-    .exec((err, usuarios) => {
-      if (err) {
-        return res.status(400).json({
-          ok: false,
-          err
-        });
-      }
-      Usuario.count({ estado: true }, (err, conteo) => {
-        res.json({
-          ok: true,
-          usuarios,
-          cuantos: conteo
-        });
-      });
-    });
+    const users = await Usuario.find(
+      { estado: true },
+      'nombre apellido email role estado google img'
+    )
+      .skip(desde)
+      .limit(limite);
+
+    const conteo = await Usuario.count({ estado: true });
+
+    res.json({ ok: true, users, cuantos: conteo });
+    
+  } catch (error) {
+    console.log(error);
+    res.status(401).json(error);
+  }
 });
 
-app.post("/usuario", (req, res) => {
+app.post('/usuario', (req, res) => {
   let body = req.body;
 
   let usuario = new Usuario({
@@ -61,21 +55,21 @@ app.post("/usuario", (req, res) => {
     });
   });
 });
-app.put("/usuario/:id", [verificaToken, verificaAdminRole], (req, res) => {
+app.put('/usuario/:id', (req, res) => {
   //Obteniendo el id
   let id = req.params.id;
   //Validando para actulizar datos los cuales van a permitir actualizar
 
   let body = _.pick(req.body, [
-    "nombres",
-    "apellidos",
-    "email",
-    "img",
-    "role",
-    "estado",
-    "telefono",
-    "tipoDoc",
-    "nroDoc"
+    'nombres',
+    'apellidos',
+    'email',
+    'img',
+    'role',
+    'estado',
+    'telefono',
+    'tipoDoc',
+    'nroDoc'
   ]);
   Usuario.findByIdAndUpdate(
     id,
@@ -100,7 +94,7 @@ app.put("/usuario/:id", [verificaToken, verificaAdminRole], (req, res) => {
   // });
 });
 
-app.delete("/usuario/:id", [verificaToken, verificaAdminRole], (req, res) => {
+app.delete('/usuario/:id', (req, res) => {
   let id = req.params.id;
   //deje de existir el rsgstro
   //Borra definitivamente
@@ -143,7 +137,7 @@ app.delete("/usuario/:id", [verificaToken, verificaAdminRole], (req, res) => {
         return res.status(400).json({
           ok: false,
           err: {
-            message: "El usuario no existe"
+            message: 'El usuario no existe'
           }
         });
       }
