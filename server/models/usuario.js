@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 //Para validar un dato unico
-const uniqueValidator = require('mongoose-unique-validator');
+const uniqueValidator = require("mongoose-unique-validator");
 
 //Declarando los roles válidos
 let rolesValidos = {
-    values: ['ADMINISTRADOR', 'EMPLEADO'],
-    message: '{VALUE} no esun Rol válido'
+  values: ["ADMINISTRADOR", "EMPLEADO"],
+  message: "{VALUE} no esun Rol válido"
 };
 
 //Declarando los tipos de doc válidos
@@ -16,51 +16,51 @@ let Schema = mongoose.Schema;
 
 //Definir el esquema  --> con los datos que va a tener la coleccion
 let usuarioSchema = new Schema({
-    DNI: {
-        type: String
-    },
-    nombres: {
-        type: String,
-        required: [true, 'El nombre es necesario']
-    },
-    apellidos: {
-        type: String,
-        required: [true, 'El apellido es necesario']
-    },
-    email: {
-        type: String,
-        unique: true,
-        required: [true, 'El correo es necesario']
-    },
-    password: {
-        type: String,
-        required: [true, 'La contraseña es necesario']
-    },
-    img: {
-        type: String,
-        required: false
-    },
-    role: {
-        type: String,
-        default: 'EMPLEADO',
-        enum: rolesValidos
-    },
-    estado: {
-        type: Boolean,
-        default: true
-    },
-    google: {
-        type: Boolean,
-        default: false
-    },
-    facebook: {
-        type: Boolean,
-        default: false
-    },
-    telefono: {
-        type: String,
-        required: false
-    }
+  DNI: {
+    type: String
+  },
+  nombres: {
+    type: String,
+    required: [true, "El nombre es necesario"]
+  },
+  apellidos: {
+    type: String,
+    required: [true, "El apellido es necesario"]
+  },
+  email: {
+    type: String,
+    unique: true,
+    required: [true, "El correo es necesario"]
+  },
+  password: {
+    type: String,
+    required: [true, "La contraseña es necesario"]
+  },
+  img: {
+    type: String,
+    required: false
+  },
+  role: {
+    type: String,
+    default: "EMPLEADO",
+    enum: rolesValidos
+  },
+  estado: {
+    type: Boolean,
+    default: true
+  },
+  google: {
+    type: Boolean,
+    default: false
+  },
+  facebook: {
+    type: Boolean,
+    default: false
+  },
+  telefono: {
+    type: String,
+    required: false
+  }
 });
 
 //Para no mostrar la contraseña encryptada
@@ -72,6 +72,6 @@ let usuarioSchema = new Schema({
 
 // }
 
-usuarioSchema.plugin(uniqueValidator, { message: '{PATH} debe ser único' });
+usuarioSchema.plugin(uniqueValidator, { message: "{PATH} debe ser único" });
 
-module.exports = mongoose.model('Usuario', usuarioSchema);
+module.exports = mongoose.model("Usuario", usuarioSchema);

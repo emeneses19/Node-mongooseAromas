@@ -1,8 +1,8 @@
-const express = require('express');
+const express = require("express");
 
-const Reserva = require('../models/reserva');
+const Reserva = require("../models/reserva");
 
-const { verificaToken } = require('../middlewares/autenticacion');
+const { verificaToken } = require("../middlewares/autenticacion");
 
 const app = express();
 
